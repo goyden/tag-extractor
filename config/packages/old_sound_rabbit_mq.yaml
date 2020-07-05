@@ -1,0 +1,26 @@
+old_sound_rabbit_mq:
+  connections:
+    default:
+      host: '%env(RABBITMQ_HOST)%'
+      port: '%env(RABBITMQ_PORT)%'
+      user: '%env(RABBITMQ_USER)%'
+      password: '%env(RABBITMQ_PASSWORD)%'
+      vhost: '/'
+      lazy: false
+      connection_timeout: 3
+      read_write_timeout: 3
+      keepalive: false
+      heartbeat: 0
+      use_socket: true
+  producers:
+    webpage_analysis:
+      connection: default
+      exchange_options: {name: 'webpage_analysis', type: direct}
+      class: App\Producer\WebpageAnalysisProducer
+
+  consumers:
+    webpage_analysis:
+      connection: default
+      exchange_options: {name: 'webpage_analysis', type: direct}
+      queue_options: {name: 'webpage_analysis'}
+      callback: App\Consumer\WebpageAnalysisConsumer
