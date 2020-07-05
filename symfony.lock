@@ -1,4 +1,7 @@
 {
+    "emag-tech-labs/rabbitmq-bundle": {
+        "version": "2.2.0"
+    },
     "friendsofsymfony/rest-bundle": {
         "version": "2.2",
         "recipe": {
@@ -13,6 +16,12 @@
     },
     "php": {
         "version": "7.3"
+    },
+    "php-amqplib/php-amqplib": {
+        "version": "v2.11.3"
+    },
+    "phpseclib/phpseclib": {
+        "version": "2.0.27"
     },
     "psr/cache": {
         "version": "1.0.1"

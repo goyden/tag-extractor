@@ -13,6 +13,8 @@ RUN apt-get update \
     # XDebug
     && pecl install xdebug-2.8.0 \
     && docker-php-ext-enable xdebug \
+    # php-amqplib
+    && docker-php-ext-install bcmath sockets \
     # Cleanning after apt-get
     && apt-get -y autoremove \
     && apt-get clean \
