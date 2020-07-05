@@ -1,3 +1,6 @@
+# Docker env files.
+/docker/php/docker.env
+/docker/postgres/docker.env
 
 ###> symfony/framework-bundle ###
 /.env.local

@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+  php:
+    build: ./docker/php
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "9000:9000"
+    env_file:
+      - docker/php/docker.env
+
+  nginx:
+    image: "nginx:1.19"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+
+  postgres:
+    image: "postgres:10"
+    ports:
+      - "5432:5432"
+    env_file:
+      - docker/postgres/docker.env
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
