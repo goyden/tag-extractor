@@ -2,20 +2,21 @@
 
 namespace App\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpFoundation\{Request, Response};
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Symfony\Component\HttpFoundation\Request;
-use App\Producer\WebpageAnalysisProducer;
-use App\Entity\{Analysis, Tag};
+use App\Storage\{AnalysisStorage, TagStorage};
+use App\Event\AnalysisCreatedEvent;
 use App\Form;
 
 class AnalysisController extends AbstractFOSRestController
 {
     public function create(
-        EntityManagerInterface $entityManager,
-        WebpageAnalysisProducer $analysisProducer,
+        EventDispatcherInterface $eventDispatcher,
+        AnalysisStorage $analysisStorage,
         Request $request
-    )
+    ): Response
     {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
@@ -28,23 +29,21 @@ class AnalysisController extends AbstractFOSRestController
             return $this->handleView($view);
         }
 
-        $analysis = (new Analysis())->setUrl($createAnalysis->getUrl());
+        $analysis = $analysisStorage->create($createAnalysis->getUrl());
 
-        $entityManager->persist($analysis);
-        $entityManager->flush();
+        $eventDispatcher->dispatch(new AnalysisCreatedEvent($analysis));
 
-        $message = ['id' => $analysis->getId(), 'url' => $analysis->getUrl()];
-        $analysisProducer->publish(serialize($message));
-
-        $view = $this->view(['id' => $analysis->getId()], 200);
-
+        $view = $this->view(['id' => $analysis->getId()], 201);
         return $this->handleView($view);
     }
 
-    public function read(EntityManagerInterface $entityManager, Request $request)
+    /**
+     * @throws HttpException
+     */
+    public function read(AnalysisStorage $analysisStorage, TagStorage $tagStorage, Request $request): Response
     {
-        $analysis = new Form\Validation\GetAnalysis();
-        $form = $this->createForm(Form\GetAnalysisType::class, $analysis);
+        $getAnalysis = new Form\Validation\GetAnalysis();
+        $form = $this->createForm(Form\GetAnalysisType::class, $getAnalysis);
         $form->submit($request->query->all());
 
         if (!$form->isSubmitted() || !$form->isValid()) {
@@ -52,13 +51,24 @@ class AnalysisController extends AbstractFOSRestController
             return $this->handleView($view);
         }
 
-        $tags = $entityManager
-            ->getRepository(Tag::class)
-            ->findBy(['analysis' => $analysis->getId()]);
+        $analysis = $analysisStorage->get($getAnalysis->getId());
+        if ($analysis === null) {
+            throw new HttpException(404, 'Analysis with this ID was not found.');
+        }
+
+        if ($analysis->getIsFailed()) {
+            throw new HttpException(400, 'Analysis is failed. There was some problems with requesting it\'s URL.');
+        }
+
+        if (!$analysis->getIsFinished()) {
+            throw new HttpException(202, 'Analysis is in progress.');
+        }
+
+        $tags = $tagStorage->findByAnalysisId($analysis->getId());
 
         $result = [];
-        foreach ($tags as $analysis) {
-            $result[$analysis->getType()] = $analysis->getAmount();
+        foreach ($tags as $tag) {
+            $result[$tag->getType()] = $tag->getAmount();
         }
 
         $view = $this->view($result, 200);
