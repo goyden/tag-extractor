@@ -69,6 +69,13 @@ class Tag
         return $this;
     }
 
+    public function incrementAmount(): self
+    {
+        $this->amount++;
+
+        return $this;
+    }
+
     public function getAnalysis(): ?Analysis
     {
         return $this->analysis;

@@ -24,3 +24,7 @@ services:
         tags: ['controller.service_arguments']
 
     App\Producer\AnalysisProducer: '@old_sound_rabbit_mq.webpage_analysis_producer'
+
+    App\EventListener\AnalysisCreatedListener:
+        tags:
+            - { name: kernel.event_listener }
