@@ -13,7 +13,13 @@ class TagsExtractor
     public function extract(Webpage $webpage): array
     {
         $crawler = new Crawler($webpage->getHtml());
-        return $this->collectNodes($crawler, []);
+
+        $root = $crawler->getNode(0);
+        $tags = [
+            $root->nodeName => (new Tag())->setType($root->nodeName)->setAmount(1)
+        ];
+
+        return $this->getChildrenNodes($crawler, $tags);
     }
 
     /**
