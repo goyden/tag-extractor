@@ -27,13 +27,14 @@ class TagsExtractor
      *
      * @return Tag[]
      */
-    private function collectNodes(Crawler $crawler, array $tags): array
+    private function getChildrenNodes(Crawler $crawler, array $tags): array
     {
         try {
             $nodes = $crawler->children();
             // InvalidArgumentException will be thrown, when node has no children.
         } catch (\InvalidArgumentException $exception) {
-            return $tags;
+            // array_values transforms map into a list.
+            return array_values($tags);
         }
 
         foreach ($nodes as $node) {
@@ -48,6 +49,6 @@ class TagsExtractor
             $tag->incrementAmount();
         }
 
-        return $this->collectNodes($nodes, $tags);
+        return $this->getChildrenNodes($nodes, $tags);
     }
 }
