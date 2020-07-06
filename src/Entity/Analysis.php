@@ -26,6 +26,16 @@ class Analysis
      */
     private $url;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default" : false})
+     */
+    private $is_finished = false;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : false})
+     */
+    private $is_failed = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -39,6 +49,30 @@ class Analysis
     public function setUrl(string $url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getIsFinished(): ?bool
+    {
+        return $this->is_finished;
+    }
+
+    public function setIsFinished(bool $is_finished): self
+    {
+        $this->is_finished = $is_finished;
+
+        return $this;
+    }
+
+    public function getIsFailed(): ?bool
+    {
+        return $this->is_failed;
+    }
+
+    public function setIsFailed(bool $is_failed): self
+    {
+        $this->is_failed = $is_failed;
 
         return $this;
     }
