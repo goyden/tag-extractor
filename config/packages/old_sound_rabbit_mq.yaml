@@ -16,11 +16,11 @@ old_sound_rabbit_mq:
     webpage_analysis:
       connection: default
       exchange_options: {name: 'webpage_analysis', type: direct}
-      class: App\Producer\WebpageAnalysisProducer
+      class: App\Producer\AnalysisProducer
 
   consumers:
     webpage_analysis:
       connection: default
       exchange_options: {name: 'webpage_analysis', type: direct}
       queue_options: {name: 'webpage_analysis'}
-      callback: App\Consumer\WebpageAnalysisConsumer
+      callback: App\Consumer\AnalysisConsumer
