@@ -57,7 +57,7 @@ class AnalysisController extends AbstractFOSRestController
         }
 
         if ($analysis->getIsFailed()) {
-            throw new HttpException(400, 'Analysis is failed. There was some problems with requesting it\'s URL.');
+            throw new HttpException(400, 'Analysis has failed. There was some problems with requesting it\'s URL.');
         }
 
         if (!$analysis->getIsFinished()) {
