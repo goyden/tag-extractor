@@ -3,6 +3,7 @@
     "license": "GPL-3.0-only",
     "require": {
         "php": "^7.3",
+        "ext-json": "*",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "emag-tech-labs/rabbitmq-bundle": "^2.2",

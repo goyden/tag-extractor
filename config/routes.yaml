@@ -1,3 +1,9 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+analysis.create:
+    path: /tags
+    controller: App\Controller\AnalysisController::create
+    methods: POST
+
+analysis.read:
+  path: /tags
+  controller: App\Controller\AnalysisController::read
+  methods: GET
