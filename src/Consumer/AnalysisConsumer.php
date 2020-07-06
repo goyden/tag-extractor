@@ -4,8 +4,9 @@ namespace App\Consumer;
 
 use PhpAmqpLib\Message\AMQPMessage;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
-use App\Service\{TagsExtractor, WebpageFactory};
 use App\Storage\{AnalysisStorage, TagStorage};
+use App\Service\WebpageFactory;
+use App\TagsExtractor;
 
 class AnalysisConsumer implements ConsumerInterface
 {
@@ -24,22 +25,15 @@ class AnalysisConsumer implements ConsumerInterface
      */
     private $webpageFactory;
 
-    /**
-     * @var TagsExtractor
-     */
-    private $tagsExtractor;
-
     public function __construct(
         AnalysisStorage $analysisStorage,
         TagStorage $tagStorage,
-        WebpageFactory $webpageFactory,
-        TagsExtractor $tagsExtractor
+        WebpageFactory $webpageFactory
     )
     {
         $this->analysisStorage = $analysisStorage;
         $this->tagStorage = $tagStorage;
         $this->webpageFactory = $webpageFactory;
-        $this->tagsExtractor = $tagsExtractor;
     }
 
     public function execute(AMQPMessage $message): void
@@ -54,7 +48,7 @@ class AnalysisConsumer implements ConsumerInterface
             return;
         }
 
-        $tags = $this->tagsExtractor->extract($webpage);
+        $tags = (new TagsExtractor())->extract($webpage);
 
         $analysis = $this->analysisStorage->get($analysisId);
 

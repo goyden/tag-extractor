@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App;
 
 use Symfony\Component\DomCrawler\Crawler;
 use App\{Entity\Tag, Webpage};
